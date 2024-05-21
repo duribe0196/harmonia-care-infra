@@ -45,6 +45,7 @@ export default function (args: IServiceModuleArgs) {
       },
     },
     timeout: 5,
+    sourceCodeHash: process.env.PRODUCTS_S3_OBJECT_HASH,
   });
 
   createServicesAPIGateway({

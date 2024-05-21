@@ -38,6 +38,7 @@ export default function (args: IUserModuleArgs) {
       },
     },
     timeout: 5,
+    sourceCodeHash: process.env.USERS_S3_OBJECT_HASH,
   });
 
   const { userPool, userPoolClient } = cognitoUtils.createUserPool({

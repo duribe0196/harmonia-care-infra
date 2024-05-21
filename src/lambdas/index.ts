@@ -18,6 +18,7 @@ interface CreateLambdaParams {
   environment?: Environment;
   dependsOn?: any[];
   timeout?: number;
+  sourceCodeHash?: string;
 }
 
 export function createLambdaFunction(args: CreateLambdaParams) {
@@ -30,6 +31,7 @@ export function createLambdaFunction(args: CreateLambdaParams) {
     resourceName,
     dependsOn,
     timeout = 3,
+    sourceCodeHash,
   } = args;
   let lambdaConfig: aws.lambda.FunctionArgs = {
     name: name,
@@ -39,8 +41,8 @@ export function createLambdaFunction(args: CreateLambdaParams) {
     s3Bucket: bucketId,
     s3Key: bucketKey,
     timeout: timeout,
-    sourceCodeHash: process.env.S3_OBJECT_HASH,
     ...(environment && { environment }),
+    ...(sourceCodeHash && { sourceCodeHash }),
   };
 
   const lambda = new aws.lambda.Function(resourceName, lambdaConfig, {

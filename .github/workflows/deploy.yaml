@@ -25,11 +25,17 @@ jobs:
           aws-region: us-east-1
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Calculate S3 object hash - for lambda updates
-        id: s3hash
+      - name: Calculate S3 object hash for users-api
+        id: s3hash-user-api
         run: |
-          HASH=$(aws s3 cp s3://harmonia-care-code/users-api/code.zip - | openssl dgst -sha256)
-          echo "::set-output name=hash::${HASH}"
+          USERS_HASH=$(aws s3 cp s3://harmonia-care-code/users-api/code.zip - | openssl dgst -sha256)
+          echo "::set-output name=users_hash::${USERS_HASH}"
+
+      - name: Calculate S3 object hash for products-api
+        id: s3hash-product-api
+        run: |
+          PRODUCTS_HASH=$(aws s3 cp s3://harmonia-care-code/products-api/code.zip - | openssl dgst -sha256)
+          echo "::set-output name=products_hash::${PRODUCTS_HASH}"
 
       - name: Install Pulumi CLI
         run: |
@@ -66,4 +72,5 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           PULUMI_ENV: ${{ secrets.PULUMI_ENV }}
-          S3_OBJECT_HASH: ${{ steps.s3hash.outputs.hash }}
+          USERS_S3_OBJECT_HASH: ${{ steps.s3hash-user-api.outputs.users_hash }}
+          PRODUCTS_S3_OBJECT_HASH: ${{ steps.s3hash-product-api.outputs.products_hash }}
