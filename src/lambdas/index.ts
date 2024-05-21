@@ -2,6 +2,7 @@ import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 
 import { lambdaRole } from "../roles/roles";
+import { SecurityGroup, Subnet } from "@pulumi/aws/ec2";
 
 type Environment = {
   variables: {
@@ -19,6 +20,8 @@ interface CreateLambdaParams {
   dependsOn?: any[];
   timeout?: number;
   sourceCodeHash?: string;
+  securityGroup?: SecurityGroup;
+  subnet?: Subnet;
 }
 
 export function createLambdaFunction(args: CreateLambdaParams) {
@@ -32,7 +35,17 @@ export function createLambdaFunction(args: CreateLambdaParams) {
     dependsOn,
     timeout = 3,
     sourceCodeHash,
+    subnet,
+    securityGroup,
   } = args;
+
+  let vpcConfig;
+  if (subnet && securityGroup) {
+    vpcConfig = {
+      securityGroupIds: [securityGroup.id],
+      subnetIds: [subnet.id],
+    };
+  }
   let lambdaConfig: aws.lambda.FunctionArgs = {
     name: name,
     runtime: "nodejs18.x",
@@ -43,6 +56,7 @@ export function createLambdaFunction(args: CreateLambdaParams) {
     timeout: timeout,
     ...(environment && { environment }),
     ...(sourceCodeHash && { sourceCodeHash }),
+    ...(vpcConfig && { vpcConfig }),
   };
 
   const lambda = new aws.lambda.Function(resourceName, lambdaConfig, {

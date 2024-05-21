@@ -43,3 +43,9 @@ new aws.iam.RolePolicyAttachment("lambda-ses-full-access", {
   role: lambdaRole.name,
   policyArn: "arn:aws:iam::aws:policy/AmazonSESFullAccess",
 });
+
+new aws.iam.RolePolicyAttachment("lambda-vpc-access-execution-role", {
+  role: lambdaRole.name,
+  policyArn:
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+});

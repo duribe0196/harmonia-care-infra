@@ -1,4 +1,5 @@
 import * as lambdaUtils from "../../lambdas";
+import * as vpcUtils from "../../vpc";
 import { createServicesAPIGateway } from "../../api-gateway";
 import * as database from "../../database";
 import { Provider } from "@pulumi/aws";
@@ -31,6 +32,8 @@ export default function (args: IServiceModuleArgs) {
     mongodbSecretName,
     mongodbPassword,
   } = args;
+
+  const { securityGroup, subnet } = vpcUtils.createSubnet({ env, projectName });
   const name = `${env}-${projectName}-lambda-services`;
   const { lambda } = lambdaUtils.createLambdaFunction({
     name: name,
@@ -46,6 +49,8 @@ export default function (args: IServiceModuleArgs) {
     },
     timeout: 5,
     sourceCodeHash: process.env.PRODUCTS_S3_OBJECT_HASH,
+    subnet,
+    securityGroup,
   });
 
   createServicesAPIGateway({

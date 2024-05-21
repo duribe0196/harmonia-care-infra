@@ -19,6 +19,15 @@ export function createMongoAtlasCluster(args: ICreateMongoAtlasClusterArgs) {
     },
   );
 
+  const ipAccessList = new mongodbatlas.ProjectIpAccessList(
+    `${env}-${projectName}-project-ip-access`,
+    {
+      projectId: project.id,
+      cidrBlock: "10.0.1.0/24", // Range de IPs VPC/Subnet
+      comment: "Access from Lambda VPC",
+    },
+  );
+
   const clusterName = `${env}-${projectName}-mongodb-atlas-cluster`;
   const cluster = new mongodbatlas.Cluster(clusterName, {
     projectId: project.id,
@@ -50,5 +59,6 @@ export function createMongoAtlasCluster(args: ICreateMongoAtlasClusterArgs) {
     connectionString: cluster.connectionStrings[0].standardSrv,
     dbUser: dbUser.username,
     dbPassword: dbUser.password,
+    ipAccessList,
   };
 }
