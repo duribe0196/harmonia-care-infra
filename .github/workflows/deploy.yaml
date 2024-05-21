@@ -1,0 +1,69 @@
+name: Pulumi Deploy
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: us-east-1
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Calculate S3 object hash - for lambda updates
+        id: s3hash
+        run: |
+          HASH=$(aws s3 cp s3://harmonia-care-code/users-api/code.zip - | openssl dgst -sha256)
+          echo "::set-output name=hash::${HASH}"
+
+      - name: Install Pulumi CLI
+        run: |
+          curl -fsSL https://get.pulumi.com | sh
+          echo "$HOME/.pulumi/bin" >> $GITHUB_PATH
+
+      - name: Install NodeJs Dependencies
+        run: npm install
+
+      - name: Pulumi Login
+        run: pulumi login
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      - name: Verify Pulumi stack
+        run: pulumi stack ls
+
+      - name: Select Pulumi Stack
+        run: pulumi stack select dev
+
+      - name: Pulumi config
+        run: pulumi config set aws:region ${{ secrets.AWS_REGION }}
+
+      - name: Pulumi Refresh
+        run: pulumi refresh --yes
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      - name: Pulumi Up
+        uses: pulumi/actions@v3
+        with:
+          command: up
+          stack-name: dev
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          PULUMI_ENV: ${{ secrets.PULUMI_ENV }}
+          S3_OBJECT_HASH: ${{ steps.s3hash.outputs.hash }}

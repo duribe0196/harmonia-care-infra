@@ -1,0 +1,10 @@
+config:
+  atlas:orgId: 5ab901d33b34b9291ab9adba
+  aws:region: us-east-1
+  aws:skipCredentialsValidation: "true"
+  harmonia-care-infra:mongoDBPassword:
+    secure: AAABAFHFx/5X4b2+oPIb0UIojuP9ocb3KvgcVhnLKk/IQ/LS/etiyEPuHESGTTUte0c67DSq
+  mongodbatlas:privateKey:
+    secure: AAABAAYy/VSPA865jIhrBXXIy41zQs3+t1UlPPOZU8Tp6U4vDxo6zXQ74abR6xgs53iAn4Mzup9Z2iygaJ83QBeSDcg=
+  mongodbatlas:publicKey:
+    secure: AAABANhkmzwhJalmJM+7IBJVIDTkb/IVGeh/kYPkEqIl69aFAuQF1g==
