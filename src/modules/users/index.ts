@@ -24,9 +24,10 @@ export default function (args: IUserModuleArgs) {
     projectName,
   } = args;
 
+  const name = `${env}-${projectName}-lambda-users`;
   const { lambda } = lambdaUtils.createLambdaFunction({
-    name: `${env}-${projectName}-api-users`,
-    resourceName: `${env}-${projectName}-api-users`,
+    name: name,
+    resourceName: name,
     provider: provider,
     bucketKey: `users-api/code.zip`,
     bucketId: `harmonia-care-code`,

@@ -34,7 +34,7 @@ export default function (args: IServiceModuleArgs) {
   } = args;
 
   const { securityGroup, subnet } = vpcUtils.createSubnet({ env, projectName });
-  const name = `${env}-${projectName}-lambda-services`;
+  const name = `${env}-${projectName}-lambda-products`;
   const { lambda } = lambdaUtils.createLambdaFunction({
     name: name,
     resourceName: name,
@@ -44,6 +44,7 @@ export default function (args: IServiceModuleArgs) {
     environment: {
       variables: {
         DYNAMODB_SECRET_NAME: dynamoSecretName,
+        MONGODB_SECRET_NAME: mongodbSecretName,
         REGION: region,
       },
     },
