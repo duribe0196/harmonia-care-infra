@@ -9,12 +9,13 @@ interface IDeployApiGatewayArgs {
 }
 
 export function deployApiGateway(args: IDeployApiGatewayArgs) {
-  const { api, methods, env, name, } = args;
+  const { api, methods, env, name } = args;
   const deployment = new aws.apigateway.Deployment(
     `${name}-deployment`,
     {
       restApi: api,
       description: `Deployment on ${new Date().toISOString()}`,
+      stageName: env,
     },
     { dependsOn: methods },
   );

@@ -33,7 +33,7 @@ export default function (args: IServiceModuleArgs) {
     mongodbPassword,
   } = args;
 
-  const { securityGroup, subnet } = vpcUtils.createSubnet({ env, projectName });
+  vpcUtils.createSubnet({ env, projectName });
   const name = `${env}-${projectName}-lambda-products`;
   const { lambda } = lambdaUtils.createLambdaFunction({
     name: name,
@@ -50,8 +50,6 @@ export default function (args: IServiceModuleArgs) {
     },
     timeout: 5,
     sourceCodeHash: process.env.PRODUCTS_S3_OBJECT_HASH,
-    subnet,
-    securityGroup,
   });
 
   createServicesAPIGateway({
@@ -63,6 +61,7 @@ export default function (args: IServiceModuleArgs) {
     projectName,
   });
 
+  const dbName = `${env}-harmonia-care`;
   const { dbUser, connectionString, clusterName, projectId } =
     database.servicesApiDB.createMongoAtlasCluster({
       mongoAtlasOrgId,
@@ -70,6 +69,7 @@ export default function (args: IServiceModuleArgs) {
       region,
       projectName,
       mongodbPassword,
+      mongodbName: dbName,
     });
 
   secretManagerUtils.createMongoDBSecrets({
@@ -81,5 +81,6 @@ export default function (args: IServiceModuleArgs) {
     dbPassword: mongodbPassword,
     clusterName,
     dbUser,
+    dbName,
   });
 }

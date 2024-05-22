@@ -7,10 +7,18 @@ interface ICreateMongoAtlasClusterArgs {
   region: string;
   projectName: string;
   mongodbPassword: Output<string>;
+  mongodbName: string;
 }
 
 export function createMongoAtlasCluster(args: ICreateMongoAtlasClusterArgs) {
-  const { env, mongoAtlasOrgId, region, projectName, mongodbPassword } = args;
+  const {
+    env,
+    mongoAtlasOrgId,
+    region,
+    projectName,
+    mongodbPassword,
+    mongodbName,
+  } = args;
   const project = new mongodbatlas.Project(
     `${env}-${projectName}-mongodb-atlas-project`,
     {
@@ -46,7 +54,7 @@ export function createMongoAtlasCluster(args: ICreateMongoAtlasClusterArgs) {
       roles: [
         {
           roleName: "readWrite",
-          databaseName: "admin",
+          databaseName: mongodbName,
         },
       ],
       authDatabaseName: "admin",

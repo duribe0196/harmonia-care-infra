@@ -11,6 +11,7 @@ interface ICreateMongoDBSecrets {
   connectionString: Output<string>;
   dbUser: Output<string>;
   dbPassword: Output<string>;
+  dbName: string;
 }
 
 export function createMongoDBSecrets(args: ICreateMongoDBSecrets) {
@@ -22,24 +23,35 @@ export function createMongoDBSecrets(args: ICreateMongoDBSecrets) {
     dbPassword,
     connectionString,
     projectId,
+    dbName,
   } = args;
 
-  const mongoSecret = new aws.secretsmanager.Secret(name, {
-    name: resourceName,
-    description: "Stores mongodb secrets",
-  });
-
   const mongoDBDetails = pulumi
-    .all([clusterName, dbUser, dbPassword, connectionString, projectId])
-    .apply(([clusterName, dbUser, dbPassword, connectionString, projectId]) => {
-      return JSON.stringify({
+    .all([clusterName, dbUser, dbPassword, connectionString, projectId, dbName])
+    .apply(
+      ([
         clusterName,
         dbUser,
         dbPassword,
         connectionString,
         projectId,
-      });
-    });
+        dbName,
+      ]) => {
+        return JSON.stringify({
+          clusterName,
+          dbUser,
+          dbPassword,
+          connectionString,
+          projectId,
+          dbName,
+        });
+      },
+    );
+
+  const mongoSecret = new aws.secretsmanager.Secret(name, {
+    name: resourceName,
+    description: "Stores mongodb secrets",
+  });
 
   new aws.secretsmanager.SecretVersion(`${name}-version`, {
     secretId: mongoSecret.id,
