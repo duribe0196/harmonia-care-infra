@@ -49,7 +49,7 @@ export function createLambdaFunction(args: CreateLambdaParams) {
   let lambdaConfig: aws.lambda.FunctionArgs = {
     name: name,
     runtime: "nodejs18.x",
-    handler: "index.handler",
+    handler: "dist/index.handler",
     role: lambdaRole.arn,
     s3Bucket: bucketId,
     s3Key: bucketKey,
