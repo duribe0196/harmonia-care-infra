@@ -5,8 +5,10 @@ interface CreateAPIGatewayIntegrationParams {
   api: RestApi;
   createProductResource: Resource;
   productResource: Resource;
+  updateProductResource: Resource;
   createProductPostMethod: Method;
   getProductsGetMethod: Method;
+  updateProductPutMethod: Method;
   handler: aws.lambda.Function;
   env: string;
   projectName: string;
@@ -19,7 +21,9 @@ export function createAPIGatewayIntegrations(
     api,
     createProductPostMethod,
     createProductResource,
+    updateProductResource,
     getProductsGetMethod,
+    updateProductPutMethod,
     productResource,
     handler,
     projectName,
@@ -44,6 +48,18 @@ export function createAPIGatewayIntegrations(
       restApi: api.id,
       resourceId: productResource.id,
       httpMethod: getProductsGetMethod.httpMethod,
+      type: "AWS_PROXY",
+      uri: handler.invokeArn,
+      integrationHttpMethod: "POST",
+    },
+  );
+
+  new aws.apigateway.Integration(
+    `${env}-${projectName}-update-products-integration`,
+    {
+      restApi: api.id,
+      resourceId: updateProductResource.id,
+      httpMethod: updateProductPutMethod.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
       integrationHttpMethod: "POST",

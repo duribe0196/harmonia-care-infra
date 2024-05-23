@@ -5,6 +5,7 @@ interface CreateAPIGatewayMethodsParams {
   api: RestApi;
   createProductResource: Resource;
   productResource: Resource;
+  updateProductResource: Resource;
   authorizer: Authorizer;
   env: string;
   projectName: string;
@@ -15,6 +16,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     api,
     createProductResource,
     productResource,
+    updateProductResource,
     authorizer,
     projectName,
     env,
@@ -45,7 +47,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     `${env}-${projectName}-update-product-get-method`,
     {
       restApi: api.id,
-      resourceId: productResource.id,
+      resourceId: updateProductResource.id,
       httpMethod: "PUT",
       authorization: "COGNITO_USER_POOLS",
       authorizerId: authorizer.id,

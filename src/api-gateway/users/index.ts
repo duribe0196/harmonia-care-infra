@@ -26,7 +26,7 @@ export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
       verifyOTPResource: verifyOTPResource,
       refreshSessionResource: refreshSessionResource,
       env,
-      projectName
+      projectName,
     });
   apiGatewayUserIntegrations.createAPIGatewayIntegrations({
     api: api,
@@ -38,7 +38,7 @@ export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
     refreshSessionResource: refreshSessionResource,
     refreshSessionMethod: refreshSessionPostMethod,
     env,
-    projectName
+    projectName,
   });
 
   // Enable API Gateway to invoke the Lambda function
@@ -50,6 +50,8 @@ export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
   });
 
   apiGatewayCommon.deployApiGateway({
+    stageName: `${env}-users`,
+    provider,
     env,
     api,
     methods: [sendOTPPostMethod, verifyOTPPostMethod, refreshSessionPostMethod],

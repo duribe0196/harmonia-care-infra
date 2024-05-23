@@ -30,5 +30,14 @@ export function createAPIGatewayResources(
     },
   );
 
-  return { createProductResource, productResource };
+  const updateProductResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-update-product-resource`,
+    {
+      restApi: api.id,
+      parentId: productResource.id,
+      pathPart: "{productId}",
+    },
+  );
+
+  return { createProductResource, productResource, updateProductResource };
 }

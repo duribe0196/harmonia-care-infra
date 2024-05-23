@@ -29,28 +29,34 @@ export function createServicesAPIGateway(args: CreateServicesAPIGatewayParams) {
     },
   );
 
-  const { createProductResource, productResource } =
+  const { createProductResource, productResource, updateProductResource } =
     apiGatewayServicesResource.createAPIGatewayResources({
       api,
       env,
       projectName,
     });
-  const { createProductPostMethod, getProductsGetMethod } =
-    apiGatewayServicesMethod.createAPIGatewayMethods({
-      api: api,
-      createProductResource,
-      productResource,
-      authorizer: authorizer,
-      env,
-      projectName,
-    });
+  const {
+    createProductPostMethod,
+    getProductsGetMethod,
+    updateProductPutMethod,
+  } = apiGatewayServicesMethod.createAPIGatewayMethods({
+    api: api,
+    createProductResource,
+    productResource,
+    updateProductResource,
+    authorizer: authorizer,
+    env,
+    projectName,
+  });
   apiGatewayServicesIntegrations.createAPIGatewayIntegrations({
     api: api,
     handler: handler,
     createProductResource,
+    updateProductResource,
     productResource,
     createProductPostMethod,
     getProductsGetMethod,
+    updateProductPutMethod,
     env,
     projectName,
   });
@@ -64,10 +70,16 @@ export function createServicesAPIGateway(args: CreateServicesAPIGatewayParams) {
   });
 
   apiGatewayCommon.deployApiGateway({
+    stageName: `${env}-products`,
+    provider,
     name: name,
     env,
     api,
-    methods: [getProductsGetMethod, createProductPostMethod],
+    methods: [
+      getProductsGetMethod,
+      createProductPostMethod,
+      updateProductPutMethod,
+    ],
   });
 
   return api;
