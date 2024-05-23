@@ -30,8 +30,8 @@ const provider = utils.createProvider(
   env,
   projectName,
 );
-const cognitoSecretName = `${env}-${projectName}cognito-secrets-v2`;
-const mongodbSecretName = `${env}-${projectName}-mongodb-secrets-v2`;
+const cognitoSecretName = `${env}-${projectName}cognito-secrets-v1`;
+const mongodbSecretName = `${env}-${projectName}-mongodb-secrets-v1`;
 
 const dbName = `${env}-harmonia-care`;
 const { dbUser, connectionString, clusterName, projectId } =

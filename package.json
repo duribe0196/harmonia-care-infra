@@ -8,7 +8,7 @@
     },
     "scripts": {
         "pulumi:dev:up": "export AWS_PROFILE=pulumi && export PULUMI_ENV=dev && pulumi refresh && pulumi up",
-        "pulumi:dev:destroy": "export AWS_PROFILE=pulumi && export PULUMI_ENV=dev && pulumi destroy"
+        "pulumi:dev:destroy": "export AWS_PROFILE=pulumi && export PULUMI_ENV=dev && pulumi refresh && pulumi destroy"
     },
     "dependencies": {
         "@pulumi/aws": "^6.0.0",
