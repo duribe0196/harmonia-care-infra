@@ -41,8 +41,20 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     },
   );
 
+  const updateProductPutMethod = new aws.apigateway.Method(
+    `${env}-${projectName}-update-product-get-method`,
+    {
+      restApi: api.id,
+      resourceId: productResource.id,
+      httpMethod: "PUT",
+      authorization: "COGNITO_USER_POOLS",
+      authorizerId: authorizer.id,
+    },
+  );
+
   return {
     createProductPostMethod,
     getProductsGetMethod,
+    updateProductPutMethod,
   };
 }

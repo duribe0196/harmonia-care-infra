@@ -2,14 +2,13 @@ import * as lambdaUtils from "../../lambdas";
 import { Provider } from "@pulumi/aws";
 import * as cognitoUtils from "../../cognito";
 import { createUsersAPIGateway } from "../../api-gateway";
-import * as database from "../../database";
 import * as secretManagerUtils from "../../secrets-manager";
 
 export interface IUserModuleArgs {
   env: string;
   provider: Provider;
   cognitoSecretName: string;
-  dynamoSecretName: string;
+  mongodbSecretName: string;
   region: string;
   projectName: string;
 }
@@ -19,7 +18,7 @@ export default function (args: IUserModuleArgs) {
     env,
     provider,
     cognitoSecretName,
-    dynamoSecretName,
+    mongodbSecretName,
     region,
     projectName,
   } = args;
@@ -34,7 +33,7 @@ export default function (args: IUserModuleArgs) {
     environment: {
       variables: {
         COGNITO_SECRET_NAME: cognitoSecretName,
-        DYNAMODB_SECRET_NAME: dynamoSecretName,
+        MONGODB_SECRET_NAME: mongodbSecretName,
         REGION: region,
       },
     },
@@ -56,24 +55,12 @@ export default function (args: IUserModuleArgs) {
     projectName,
   });
 
-  database.userApiDB.createDynamoDBTables({
-    env,
-    projectName,
-  });
-
   secretManagerUtils.createCognitoSecrets({
     name: cognitoSecretName,
     resourceName: cognitoSecretName,
     userPoolId: userPool.id,
     userPoolClientId: userPoolClient.id,
     region: region,
-  });
-
-  secretManagerUtils.createDynamoSecrets({
-    name: dynamoSecretName,
-    resourceName: dynamoSecretName,
-    region: region,
-    tableName: `${env}-${projectName}-otp-codes-table`,
   });
 
   return { userPool };

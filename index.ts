@@ -3,6 +3,8 @@ import * as utils from "./src/utils";
 import { Input } from "@pulumi/pulumi";
 import { Region } from "@pulumi/aws";
 import * as infra from "./src/modules";
+import * as database from "./src/database";
+import * as secretManagerUtils from "./src/secrets-manager";
 
 const env = process.env.PULUMI_ENV;
 const awsRegion = process.env.AWS_REGION;
@@ -29,14 +31,36 @@ const provider = utils.createProvider(
   projectName,
 );
 const cognitoSecretName = `${env}-${projectName}cognito-secrets-v2`;
-const dynamoSecretName = `${env}-${projectName}-dynamo-secrets-v2`;
 const mongodbSecretName = `${env}-${projectName}-mongodb-secrets-v2`;
+
+const dbName = `${env}-harmonia-care`;
+const { dbUser, connectionString, clusterName, projectId } =
+  database.createMongoAtlasCluster({
+    mongoAtlasOrgId,
+    env,
+    region,
+    projectName,
+    mongodbPassword: dbPassword,
+    mongodbName: dbName,
+  });
+
+secretManagerUtils.createMongoDBSecrets({
+  name: mongodbSecretName,
+  resourceName: mongodbSecretName,
+  region: region,
+  projectId,
+  connectionString,
+  dbPassword,
+  clusterName,
+  dbUser,
+  dbName,
+});
 
 const { userPool } = infra.runUserModuleInfrastructure({
   env,
   provider,
   cognitoSecretName,
-  dynamoSecretName,
+  mongodbSecretName,
   region,
   projectName,
 });
@@ -44,12 +68,9 @@ const { userPool } = infra.runUserModuleInfrastructure({
 infra.runProductsModuleInfrastructure({
   env,
   cognitoSecretName,
-  dynamoSecretName,
   region,
   userPool,
   provider,
-  mongoAtlasOrgId,
   projectName,
   mongodbSecretName,
-  mongodbPassword: dbPassword,
 });

@@ -67,7 +67,7 @@ export function createServicesAPIGateway(args: CreateServicesAPIGatewayParams) {
     name: name,
     env,
     api,
-    methods: [createProductPostMethod],
+    methods: [getProductsGetMethod, createProductPostMethod],
   });
 
   return api;
