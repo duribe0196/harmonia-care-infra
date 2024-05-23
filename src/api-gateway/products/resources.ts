@@ -12,12 +12,14 @@ export function createAPIGatewayResources(
 ) {
   const { api, projectName, env } = args;
 
-  const productResource = new aws.apigateway.Resource(`${env}-${projectName}-product-resource`, {
-    restApi: api.id,
-    parentId: api.rootResourceId,
-    pathPart: "product",
-  });
-
+  const productResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-product-resource`,
+    {
+      restApi: api.id,
+      parentId: api.rootResourceId,
+      pathPart: "product",
+    },
+  );
 
   const createProductResource = new aws.apigateway.Resource(
     `${env}-${projectName}-create-product-resource`,
@@ -28,5 +30,5 @@ export function createAPIGatewayResources(
     },
   );
 
-  return { createProductResource };
+  return { createProductResource, productResource };
 }

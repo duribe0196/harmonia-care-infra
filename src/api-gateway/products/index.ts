@@ -29,16 +29,17 @@ export function createServicesAPIGateway(args: CreateServicesAPIGatewayParams) {
     },
   );
 
-  const { createProductResource } =
+  const { createProductResource, productResource } =
     apiGatewayServicesResource.createAPIGatewayResources({
       api,
       env,
       projectName,
     });
-  const { createProductPostMethod } =
+  const { createProductPostMethod, getProductsGetMethod } =
     apiGatewayServicesMethod.createAPIGatewayMethods({
       api: api,
       createProductResource,
+      productResource,
       authorizer: authorizer,
       env,
       projectName,
@@ -47,7 +48,9 @@ export function createServicesAPIGateway(args: CreateServicesAPIGatewayParams) {
     api: api,
     handler: handler,
     createProductResource,
+    productResource,
     createProductPostMethod,
+    getProductsGetMethod,
     env,
     projectName,
   });

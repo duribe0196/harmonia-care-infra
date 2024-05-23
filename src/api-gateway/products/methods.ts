@@ -4,13 +4,21 @@ import { Authorizer, Resource, RestApi } from "@pulumi/aws/apigateway";
 interface CreateAPIGatewayMethodsParams {
   api: RestApi;
   createProductResource: Resource;
+  productResource: Resource;
   authorizer: Authorizer;
   env: string;
   projectName: string;
 }
 
 export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
-  const { api, createProductResource, authorizer, projectName, env } = args;
+  const {
+    api,
+    createProductResource,
+    productResource,
+    authorizer,
+    projectName,
+    env,
+  } = args;
 
   const createProductPostMethod = new aws.apigateway.Method(
     `${env}-${projectName}-create-product-post-method`,
@@ -23,7 +31,18 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     },
   );
 
+  const getProductsGetMethod = new aws.apigateway.Method(
+    `${env}-${projectName}-get-products-get-method`,
+    {
+      restApi: api.id,
+      resourceId: productResource.id,
+      httpMethod: "GET",
+      authorization: "NONE",
+    },
+  );
+
   return {
     createProductPostMethod,
+    getProductsGetMethod,
   };
 }
