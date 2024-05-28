@@ -1,9 +1,9 @@
 import * as lambdaUtils from "../../lambdas";
-import { createProductsAPIGateway } from "../../api-gateway";
+import { createOrdersAPIGateway } from "../../api-gateway";
 import { Provider } from "@pulumi/aws";
 import * as aws from "@pulumi/aws";
 
-export interface IProductModuleArgs {
+export interface IOrdersModuleArgs {
   env: string;
   provider: Provider;
   cognitoSecretName: string;
@@ -13,16 +13,16 @@ export interface IProductModuleArgs {
   mongodbSecretName: string;
 }
 
-export default function (args: IProductModuleArgs) {
+export default function (args: IOrdersModuleArgs) {
   const { region, env, provider, userPool, projectName, mongodbSecretName } =
     args;
 
-  const name = `${env}-${projectName}-lambda-products`;
+  const name = `${env}-${projectName}-lambda-orders`;
   const { lambda } = lambdaUtils.createLambdaFunction({
     name: name,
     resourceName: name,
     provider: provider,
-    bucketKey: `products-api/code.zip`,
+    bucketKey: `orders-api/code.zip`,
     bucketId: `harmonia-care-code`,
     environment: {
       variables: {
@@ -34,8 +34,8 @@ export default function (args: IProductModuleArgs) {
     sourceCodeHash: process.env.PRODUCTS_S3_OBJECT_HASH,
   });
 
-  createProductsAPIGateway({
-    name: `${env}-${projectName}-products-api-gateway`,
+  createOrdersAPIGateway({
+    name: `${env}-${projectName}-orders-api-gateway`,
     handler: lambda,
     provider: provider,
     userPool: userPool,

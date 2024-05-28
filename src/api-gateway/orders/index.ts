@@ -1,11 +1,11 @@
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
-import * as apiGatewayServicesResource from "./resources";
-import * as apiGatewayServicesMethod from "./methods";
-import * as apiGatewayServicesIntegrations from "./integrations";
+import * as apiGatewayOrdersResource from "./resources";
+import * as apiGatewayOrdersMethods from "./methods";
+import * as apiGatewayOrdersIntegrations from "./integrations";
 import * as apiGatewayCommon from "../common";
 
-interface CreateServicesAPIGatewayParams {
+interface CreateOrdersAPIGatewayParams {
   name: string;
   handler: aws.lambda.Function;
   provider: pulumi.ProviderResource;
@@ -14,13 +14,13 @@ interface CreateServicesAPIGatewayParams {
   projectName: string;
 }
 
-export function createProductsAPIGateway(args: CreateServicesAPIGatewayParams) {
+export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
   const { name, handler, provider, userPool, env, projectName } = args;
   const api = new aws.apigateway.RestApi(name, {}, { provider });
 
   // Create an API Gateway Authorizer using the Cognito User Pool
   const authorizer = new aws.apigateway.Authorizer(
-    `${env}-${projectName}-products-cognito-authorizer`,
+    `${env}-${projectName}-orders-cognito-authorizer`,
     {
       restApi: api,
       type: "COGNITO_USER_POOLS",
@@ -29,35 +29,32 @@ export function createProductsAPIGateway(args: CreateServicesAPIGatewayParams) {
     },
   );
 
-  const { createProductResource, productResource, updateProductResource } =
-    apiGatewayServicesResource.createAPIGatewayResources({
+  const { updateOrderResource, orderResource } =
+    apiGatewayOrdersResource.createAPIGatewayResources({
       api,
       env,
       projectName,
     });
-  const {
-    createProductPostMethod,
-    getProductsGetMethod,
-    updateProductPutMethod,
-  } = apiGatewayServicesMethod.createAPIGatewayMethods({
-    api: api,
-    createProductResource,
-    productResource,
-    updateProductResource,
-    authorizer: authorizer,
+
+  const { updateOrderPutMethod, getOrderGetMethod, createOrderPostMethod } =
+    apiGatewayOrdersMethods.createAPIGatewayMethods({
+      api,
+      env,
+      orderResource,
+      updateOrderResource,
+      projectName,
+      authorizer,
+    });
+
+  apiGatewayOrdersIntegrations.createAPIGatewayIntegrations({
+    api,
     env,
-    projectName,
-  });
-  apiGatewayServicesIntegrations.createAPIGatewayIntegrations({
-    api: api,
-    handler: handler,
-    createProductResource,
-    updateProductResource,
-    productResource,
-    createProductPostMethod,
-    getProductsGetMethod,
-    updateProductPutMethod,
-    env,
+    createOrderPostMethod,
+    orderResource,
+    updateOrderResource,
+    getOrderGetMethod,
+    handler,
+    updateOrderPutMethod,
     projectName,
   });
 
@@ -70,16 +67,12 @@ export function createProductsAPIGateway(args: CreateServicesAPIGatewayParams) {
   });
 
   apiGatewayCommon.deployApiGateway({
-    stageName: `${env}-products`,
+    stageName: `${env}-orders`,
     provider,
     name: name,
     env,
     api,
-    methods: [
-      getProductsGetMethod,
-      createProductPostMethod,
-      updateProductPutMethod,
-    ],
+    methods: [updateOrderPutMethod, getOrderGetMethod, createOrderPostMethod],
   });
 
   return api;

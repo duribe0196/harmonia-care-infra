@@ -5,6 +5,7 @@ import { Region } from "@pulumi/aws";
 import * as infra from "./src/modules";
 import * as database from "./src/database";
 import * as secretManagerUtils from "./src/secrets-manager";
+import * as vpcUtils from "./src/vpc";
 
 const env = process.env.PULUMI_ENV;
 const awsRegion = process.env.AWS_REGION;
@@ -32,6 +33,8 @@ const provider = utils.createProvider(
 );
 const cognitoSecretName = `${env}-${projectName}cognito-secrets-v1`;
 const mongodbSecretName = `${env}-${projectName}-mongodb-secrets-v1`;
+
+vpcUtils.createSubnet({ env, projectName });
 
 const dbName = `${env}-harmonia-care`;
 const { dbUser, connectionString, clusterName, projectId } =
@@ -66,6 +69,16 @@ const { userPool } = infra.runUserModuleInfrastructure({
 });
 
 infra.runProductsModuleInfrastructure({
+  env,
+  cognitoSecretName,
+  region,
+  userPool,
+  provider,
+  projectName,
+  mongodbSecretName,
+});
+
+infra.runOrdersModuleInfrastructure({
   env,
   cognitoSecretName,
   region,
