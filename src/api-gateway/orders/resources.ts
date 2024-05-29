@@ -21,6 +21,15 @@ export function createAPIGatewayResources(
     },
   );
 
+  const orderResourceAuth = new aws.apigateway.Resource(
+    `${env}-${projectName}-order-resource`,
+    {
+      restApi: api.id,
+      parentId: orderResource.id,
+      pathPart: "auth",
+    },
+  );
+
   const updateOrderResource = new aws.apigateway.Resource(
     `${env}-${projectName}-update-order-resource`,
     {
@@ -30,5 +39,19 @@ export function createAPIGatewayResources(
     },
   );
 
-  return { orderResource, updateOrderResource };
+  const updateOrderResourceAuth = new aws.apigateway.Resource(
+    `${env}-${projectName}-update-order-resource`,
+    {
+      restApi: api.id,
+      parentId: orderResourceAuth.id,
+      pathPart: "{orderId}",
+    },
+  );
+
+  return {
+    orderResource,
+    updateOrderResource,
+    orderResourceAuth,
+    updateOrderResourceAuth,
+  };
 }

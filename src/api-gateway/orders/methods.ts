@@ -4,7 +4,9 @@ import { Authorizer, Resource, RestApi } from "@pulumi/aws/apigateway";
 interface CreateAPIGatewayMethodsParams {
   api: RestApi;
   updateOrderResource: Resource;
+  updateOrderResourceAuth: Resource;
   orderResource: Resource;
+  orderResourceAuth: Resource;
   authorizer: Authorizer;
   env: string;
   projectName: string;
@@ -17,6 +19,8 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     orderResource,
     authorizer,
     projectName,
+    updateOrderResourceAuth,
+    orderResourceAuth,
     env,
   } = args;
 
@@ -26,11 +30,19 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
       restApi: api.id,
       resourceId: orderResource.id,
       httpMethod: "POST",
+      authorization: "NONE",
+      authorizerId: authorizer.id,
+    },
+  );
+
+  const createOrderPostMethodAuth = new aws.apigateway.Method(
+    `${env}-${projectName}-create-order-post-method-auth`,
+    {
+      restApi: api.id,
+      resourceId: orderResourceAuth.id,
+      httpMethod: "POST",
       authorization: "COGNITO_USER_POOLS",
-      authorizerId: authorizer.id, // Opcional: asocia el autorizer de Cognito
-      requestParameters: {
-        "method.request.header.Authorization": false, // Opcional: no requiere el encabezado Authorization
-      },
+      authorizerId: authorizer.id,
     },
   );
 
@@ -40,11 +52,18 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
       restApi: api.id,
       resourceId: orderResource.id,
       httpMethod: "GET",
+      authorization: "NONE",
+    },
+  );
+
+  const getOrderGetMethodAuth = new aws.apigateway.Method(
+    `${env}-${projectName}-get-order-get-method-auth`,
+    {
+      restApi: api.id,
+      resourceId: orderResourceAuth.id,
+      httpMethod: "GET",
       authorization: "COGNITO_USER_POOLS",
-      authorizerId: authorizer.id, // Opcional: asocia el autorizer de Cognito
-      requestParameters: {
-        "method.request.header.Authorization": false, // Opcional: no requiere el encabezado Authorization
-      },
+      authorizerId: authorizer.id,
     },
   );
 
@@ -54,11 +73,18 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
       restApi: api.id,
       resourceId: updateOrderResource.id,
       httpMethod: "PUT",
+      authorization: "NONE",
+    },
+  );
+
+  const updateOrderPutMethodAuth = new aws.apigateway.Method(
+    `${env}-${projectName}-update-order-put-method-auth`,
+    {
+      restApi: api.id,
+      resourceId: updateOrderResourceAuth.id,
+      httpMethod: "PUT",
       authorization: "COGNITO_USER_POOLS",
-      authorizerId: authorizer.id, // Opcional: asocia el autorizer de Cognito
-      requestParameters: {
-        "method.request.header.Authorization": false, // Opcional: no requiere el encabezado Authorization
-      },
+      authorizerId: authorizer.id,
     },
   );
 
@@ -66,5 +92,8 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     createOrderPostMethod,
     getOrderGetMethod,
     updateOrderPutMethod,
+    createOrderPostMethodAuth,
+    getOrderGetMethodAuth,
+    updateOrderPutMethodAuth,
   };
 }

@@ -29,32 +29,49 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
     },
   );
 
-  const { updateOrderResource, orderResource } =
-    apiGatewayOrdersResource.createAPIGatewayResources({
-      api,
-      env,
-      projectName,
-    });
+  const {
+    updateOrderResource,
+    orderResource,
+    updateOrderResourceAuth,
+    orderResourceAuth,
+  } = apiGatewayOrdersResource.createAPIGatewayResources({
+    api,
+    env,
+    projectName,
+  });
 
-  const { updateOrderPutMethod, getOrderGetMethod, createOrderPostMethod } =
-    apiGatewayOrdersMethods.createAPIGatewayMethods({
-      api,
-      env,
-      orderResource,
-      updateOrderResource,
-      projectName,
-      authorizer,
-    });
+  const {
+    updateOrderPutMethod,
+    getOrderGetMethod,
+    createOrderPostMethod,
+    createOrderPostMethodAuth,
+    updateOrderPutMethodAuth,
+    getOrderGetMethodAuth,
+  } = apiGatewayOrdersMethods.createAPIGatewayMethods({
+    api,
+    env,
+    orderResource,
+    updateOrderResource,
+    projectName,
+    authorizer,
+    orderResourceAuth,
+    updateOrderResourceAuth,
+  });
 
   apiGatewayOrdersIntegrations.createAPIGatewayIntegrations({
     api,
     env,
     createOrderPostMethod,
+    createOrderPostMethodAuth,
     orderResource,
+    orderResourceAuth,
     updateOrderResource,
+    updateOrderPutMethodAuth,
     getOrderGetMethod,
+    getOrderGetMethodAuth,
     handler,
     updateOrderPutMethod,
+    updateOrderResourceAuth,
     projectName,
   });
 
