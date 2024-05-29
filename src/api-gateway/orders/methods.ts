@@ -26,7 +26,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
       restApi: api.id,
       resourceId: orderResource.id,
       httpMethod: "POST",
-      authorization: "NONE",
+      authorization: "COGNITO_USER_POOLS",
       authorizerId: authorizer.id, // Opcional: asocia el autorizer de Cognito
       requestParameters: {
         "method.request.header.Authorization": false, // Opcional: no requiere el encabezado Authorization
@@ -40,7 +40,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
       restApi: api.id,
       resourceId: orderResource.id,
       httpMethod: "GET",
-      authorization: "NONE",
+      authorization: "COGNITO_USER_POOLS",
       authorizerId: authorizer.id, // Opcional: asocia el autorizer de Cognito
       requestParameters: {
         "method.request.header.Authorization": false, // Opcional: no requiere el encabezado Authorization
@@ -54,7 +54,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
       restApi: api.id,
       resourceId: updateOrderResource.id,
       httpMethod: "PUT",
-      authorization: "NONE",
+      authorization: "COGNITO_USER_POOLS",
       authorizerId: authorizer.id, // Opcional: asocia el autorizer de Cognito
       requestParameters: {
         "method.request.header.Authorization": false, // Opcional: no requiere el encabezado Authorization
