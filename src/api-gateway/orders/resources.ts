@@ -30,28 +30,28 @@ export function createAPIGatewayResources(
     },
   );
 
-  const updateOrderResource = new aws.apigateway.Resource(
-    `${env}-${projectName}-update-order-resource`,
+  const removeProductFromOrderResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-remove-product-from-order-resource`,
     {
       restApi: api.id,
       parentId: orderResource.id,
-      pathPart: "{orderId}",
+      pathPart: "remove-product",
     },
   );
 
-  const updateOrderResourceAuth = new aws.apigateway.Resource(
-    `${env}-${projectName}-update-order-resource-auth`,
+  const removeProductFromOrderResourceAuth = new aws.apigateway.Resource(
+    `${env}-${projectName}-remove-product-from-order-resource-auth`,
     {
       restApi: api.id,
       parentId: orderResourceAuth.id,
-      pathPart: "{orderId}",
+      pathPart: "remove-product",
     },
   );
 
   return {
     orderResource,
-    updateOrderResource,
     orderResourceAuth,
-    updateOrderResourceAuth,
+    removeProductFromOrderResource,
+    removeProductFromOrderResourceAuth,
   };
 }

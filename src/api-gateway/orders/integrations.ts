@@ -5,14 +5,14 @@ interface CreateAPIGatewayIntegrationParams {
   api: RestApi;
   orderResource: Resource;
   orderResourceAuth: Resource;
-  updateOrderResource: Resource;
-  updateOrderResourceAuth: Resource;
+  removeProductFromOrderResource: Resource;
+  removeProductFromOrderResourceAuth: Resource;
   createOrderPostMethod: Method;
   createOrderPostMethodAuth: Method;
   getOrderGetMethod: Method;
   getOrderGetMethodAuth: Method;
-  updateOrderPutMethod: Method;
-  updateOrderPutMethodAuth: Method;
+  removeProductFromOrderPutMethod: Method;
+  removeProductOrderPutMethodAuth: Method;
   handler: aws.lambda.Function;
   env: string;
   projectName: string;
@@ -24,15 +24,15 @@ export function createAPIGatewayIntegrations(
   const {
     api,
     getOrderGetMethod,
-    updateOrderPutMethod,
-    updateOrderResource,
+    removeProductFromOrderPutMethod,
+    removeProductFromOrderResource,
     orderResource,
     createOrderPostMethod,
     orderResourceAuth,
     createOrderPostMethodAuth,
     getOrderGetMethodAuth,
-    updateOrderResourceAuth,
-    updateOrderPutMethodAuth,
+    removeProductFromOrderResourceAuth,
+    removeProductOrderPutMethodAuth,
     handler,
     projectName,
     env,
@@ -87,11 +87,11 @@ export function createAPIGatewayIntegrations(
   );
 
   new aws.apigateway.Integration(
-    `${env}-${projectName}-update-order-integration`,
+    `${env}-${projectName}-remove-product-from-order-integration`,
     {
       restApi: api.id,
-      resourceId: updateOrderResource.id,
-      httpMethod: updateOrderPutMethod.httpMethod,
+      resourceId: removeProductFromOrderResource.id,
+      httpMethod: removeProductFromOrderPutMethod.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
       integrationHttpMethod: "POST",
@@ -99,11 +99,11 @@ export function createAPIGatewayIntegrations(
   );
 
   new aws.apigateway.Integration(
-    `${env}-${projectName}-update-order-auth-integration`,
+    `${env}-${projectName}-remove-product-from-order-auth-integration`,
     {
       restApi: api.id,
-      resourceId: updateOrderResourceAuth.id,
-      httpMethod: updateOrderPutMethodAuth.httpMethod,
+      resourceId: removeProductFromOrderResourceAuth.id,
+      httpMethod: removeProductOrderPutMethodAuth.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
       integrationHttpMethod: "POST",

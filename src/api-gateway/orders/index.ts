@@ -30,9 +30,9 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
   );
 
   const {
-    updateOrderResource,
+    removeProductFromOrderResourceAuth,
+    removeProductFromOrderResource,
     orderResource,
-    updateOrderResourceAuth,
     orderResourceAuth,
   } = apiGatewayOrdersResource.createAPIGatewayResources({
     api,
@@ -41,21 +41,21 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
   });
 
   const {
-    updateOrderPutMethod,
+    removeProductFromOrderPutMethod,
     getOrderGetMethod,
     createOrderPostMethod,
     createOrderPostMethodAuth,
-    updateOrderPutMethodAuth,
+    removeProductOrderPutMethodAuth,
     getOrderGetMethodAuth,
   } = apiGatewayOrdersMethods.createAPIGatewayMethods({
     api,
     env,
     orderResource,
-    updateOrderResource,
     projectName,
     authorizer,
     orderResourceAuth,
-    updateOrderResourceAuth,
+    removeProductFromOrderResourceAuth,
+    removeProductFromOrderResource,
   });
 
   apiGatewayOrdersIntegrations.createAPIGatewayIntegrations({
@@ -65,13 +65,13 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
     createOrderPostMethodAuth,
     orderResource,
     orderResourceAuth,
-    updateOrderResource,
-    updateOrderPutMethodAuth,
+    removeProductFromOrderResource,
+    removeProductOrderPutMethodAuth,
     getOrderGetMethod,
     getOrderGetMethodAuth,
     handler,
-    updateOrderPutMethod,
-    updateOrderResourceAuth,
+    removeProductFromOrderPutMethod,
+    removeProductFromOrderResourceAuth,
     projectName,
   });
 
@@ -89,7 +89,11 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
     name: name,
     env,
     api,
-    methods: [updateOrderPutMethod, getOrderGetMethod, createOrderPostMethod],
+    methods: [
+      removeProductOrderPutMethodAuth,
+      getOrderGetMethod,
+      createOrderPostMethod,
+    ],
   });
 
   return api;

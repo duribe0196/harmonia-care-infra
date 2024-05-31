@@ -3,8 +3,8 @@ import { Authorizer, Resource, RestApi } from "@pulumi/aws/apigateway";
 
 interface CreateAPIGatewayMethodsParams {
   api: RestApi;
-  updateOrderResource: Resource;
-  updateOrderResourceAuth: Resource;
+  removeProductFromOrderResource: Resource;
+  removeProductFromOrderResourceAuth: Resource;
   orderResource: Resource;
   orderResourceAuth: Resource;
   authorizer: Authorizer;
@@ -15,11 +15,11 @@ interface CreateAPIGatewayMethodsParams {
 export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
   const {
     api,
-    updateOrderResource,
+    removeProductFromOrderResource,
     orderResource,
     authorizer,
     projectName,
-    updateOrderResourceAuth,
+    removeProductFromOrderResourceAuth,
     orderResourceAuth,
     env,
   } = args;
@@ -67,33 +67,39 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     },
   );
 
-  const updateOrderPutMethod = new aws.apigateway.Method(
-    `${env}-${projectName}-update-order-put-method`,
+  const removeProductFromOrderPutMethod = new aws.apigateway.Method(
+    `${env}-${projectName}-remove-product-from-order-put-method`,
     {
       restApi: api.id,
-      resourceId: updateOrderResource.id,
+      resourceId: removeProductFromOrderResource.id,
       httpMethod: "PUT",
       authorization: "NONE",
+      requestParameters: {
+        "method.request.path.orderId": true,
+      },
     },
   );
 
-  const updateOrderPutMethodAuth = new aws.apigateway.Method(
-    `${env}-${projectName}-update-order-put-method-auth`,
+  const removeProductOrderPutMethodAuth = new aws.apigateway.Method(
+    `${env}-${projectName}-remove-product-from-order-put-method-auth`,
     {
       restApi: api.id,
-      resourceId: updateOrderResourceAuth.id,
+      resourceId: removeProductFromOrderResourceAuth.id,
       httpMethod: "PUT",
       authorization: "COGNITO_USER_POOLS",
       authorizerId: authorizer.id,
+      requestParameters: {
+        "method.request.path.orderId": true,
+      },
     },
   );
 
   return {
     createOrderPostMethod,
     getOrderGetMethod,
-    updateOrderPutMethod,
+    removeProductFromOrderPutMethod,
     createOrderPostMethodAuth,
     getOrderGetMethodAuth,
-    updateOrderPutMethodAuth,
+    removeProductOrderPutMethodAuth,
   };
 }
