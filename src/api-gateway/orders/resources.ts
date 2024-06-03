@@ -12,46 +12,84 @@ export function createAPIGatewayResources(
 ) {
   const { api, projectName, env } = args;
 
-  const orderResource = new aws.apigateway.Resource(
-    `${env}-${projectName}-order-resource`,
+  // Public resources
+  const publicResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-public-resource`,
     {
       restApi: api.id,
       parentId: api.rootResourceId,
+      pathPart: "public",
+    },
+  );
+
+  const publicOrderResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-public-order-resource`,
+    {
+      restApi: api.id,
+      parentId: publicResource.id,
       pathPart: "order",
     },
   );
 
-  const orderResourceAuth = new aws.apigateway.Resource(
-    `${env}-${projectName}-order-resource-auth`,
+  const removeProductPublicResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-remove-product-public-resource`,
     {
       restApi: api.id,
-      parentId: orderResource.id,
+      parentId: publicOrderResource.id,
+      pathPart: "remove-product",
+    },
+  );
+
+  const removeProductFromOrderPublicResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-remove-product-from-order-public-resource`,
+    {
+      restApi: api.id,
+      parentId: removeProductPublicResource.id,
+      pathPart: "{orderId}",
+    },
+  );
+
+  // Auth resources
+  const authResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-auth-resource`,
+    {
+      restApi: api.id,
+      parentId: api.rootResourceId,
       pathPart: "auth",
     },
   );
 
-  const removeProductFromOrderResource = new aws.apigateway.Resource(
-    `${env}-${projectName}-remove-product-from-order-resource`,
+  const authOrderResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-auth-order-resource`,
     {
       restApi: api.id,
-      parentId: orderResource.id,
+      parentId: authResource.id,
+      pathPart: "order",
+    },
+  );
+
+  const removeProductAuthResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-remove-product-auth-resource`,
+    {
+      restApi: api.id,
+      parentId: authOrderResource.id,
       pathPart: "remove-product",
     },
   );
 
-  const removeProductFromOrderResourceAuth = new aws.apigateway.Resource(
+  const removeProductFromOrderAuthResource = new aws.apigateway.Resource(
     `${env}-${projectName}-remove-product-from-order-resource-auth`,
     {
       restApi: api.id,
-      parentId: orderResourceAuth.id,
-      pathPart: "remove-product",
+      parentId: removeProductAuthResource.id,
+      pathPart: "{orderId}",
     },
   );
 
   return {
-    orderResource,
-    orderResourceAuth,
-    removeProductFromOrderResource,
-    removeProductFromOrderResourceAuth,
+    publicOrderResource,
+    authOrderResource,
+    removeProductFromOrderPublicResource,
+    removeProductFromOrderAuthResource,
   };
 }

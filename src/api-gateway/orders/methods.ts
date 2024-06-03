@@ -3,10 +3,10 @@ import { Authorizer, Resource, RestApi } from "@pulumi/aws/apigateway";
 
 interface CreateAPIGatewayMethodsParams {
   api: RestApi;
-  removeProductFromOrderResource: Resource;
-  removeProductFromOrderResourceAuth: Resource;
-  orderResource: Resource;
-  orderResourceAuth: Resource;
+  removeProductFromOrderPublicResource: Resource;
+  removeProductFromOrderAuthResource: Resource;
+  publicOrderResource: Resource;
+  authOrderResource: Resource;
   authorizer: Authorizer;
   env: string;
   projectName: string;
@@ -15,12 +15,12 @@ interface CreateAPIGatewayMethodsParams {
 export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
   const {
     api,
-    removeProductFromOrderResource,
-    orderResource,
+    removeProductFromOrderPublicResource,
+    publicOrderResource,
     authorizer,
     projectName,
-    removeProductFromOrderResourceAuth,
-    orderResourceAuth,
+    removeProductFromOrderAuthResource,
+    authOrderResource,
     env,
   } = args;
 
@@ -28,7 +28,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     `${env}-${projectName}-create-order-post-method`,
     {
       restApi: api.id,
-      resourceId: orderResource.id,
+      resourceId: publicOrderResource.id,
       httpMethod: "POST",
       authorization: "NONE",
       authorizerId: authorizer.id,
@@ -39,7 +39,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     `${env}-${projectName}-create-order-post-method-auth`,
     {
       restApi: api.id,
-      resourceId: orderResourceAuth.id,
+      resourceId: authOrderResource.id,
       httpMethod: "POST",
       authorization: "COGNITO_USER_POOLS",
       authorizerId: authorizer.id,
@@ -50,7 +50,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     `${env}-${projectName}-get-order-get-method`,
     {
       restApi: api.id,
-      resourceId: orderResource.id,
+      resourceId: publicOrderResource.id,
       httpMethod: "GET",
       authorization: "NONE",
     },
@@ -60,7 +60,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     `${env}-${projectName}-get-order-get-method-auth`,
     {
       restApi: api.id,
-      resourceId: orderResourceAuth.id,
+      resourceId: authOrderResource.id,
       httpMethod: "GET",
       authorization: "COGNITO_USER_POOLS",
       authorizerId: authorizer.id,
@@ -71,7 +71,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     `${env}-${projectName}-remove-product-from-order-put-method`,
     {
       restApi: api.id,
-      resourceId: removeProductFromOrderResource.id,
+      resourceId: removeProductFromOrderPublicResource.id,
       httpMethod: "PUT",
       authorization: "NONE",
       requestParameters: {
@@ -84,7 +84,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     `${env}-${projectName}-remove-product-from-order-put-method-auth`,
     {
       restApi: api.id,
-      resourceId: removeProductFromOrderResourceAuth.id,
+      resourceId: removeProductFromOrderAuthResource.id,
       httpMethod: "PUT",
       authorization: "COGNITO_USER_POOLS",
       authorizerId: authorizer.id,

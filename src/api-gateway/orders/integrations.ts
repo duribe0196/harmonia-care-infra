@@ -3,10 +3,10 @@ import { Method, Resource, RestApi } from "@pulumi/aws/apigateway";
 
 interface CreateAPIGatewayIntegrationParams {
   api: RestApi;
-  orderResource: Resource;
-  orderResourceAuth: Resource;
-  removeProductFromOrderResource: Resource;
-  removeProductFromOrderResourceAuth: Resource;
+  removeProductFromOrderPublicResource: Resource;
+  removeProductFromOrderAuthResource: Resource;
+  publicOrderResource: Resource;
+  authOrderResource: Resource;
   createOrderPostMethod: Method;
   createOrderPostMethodAuth: Method;
   getOrderGetMethod: Method;
@@ -25,13 +25,13 @@ export function createAPIGatewayIntegrations(
     api,
     getOrderGetMethod,
     removeProductFromOrderPutMethod,
-    removeProductFromOrderResource,
-    orderResource,
+    removeProductFromOrderPublicResource,
+    publicOrderResource,
     createOrderPostMethod,
-    orderResourceAuth,
+    authOrderResource,
     createOrderPostMethodAuth,
     getOrderGetMethodAuth,
-    removeProductFromOrderResourceAuth,
+    removeProductFromOrderAuthResource,
     removeProductOrderPutMethodAuth,
     handler,
     projectName,
@@ -42,7 +42,7 @@ export function createAPIGatewayIntegrations(
     `${env}-${projectName}-create-order-integration`,
     {
       restApi: api.id,
-      resourceId: orderResource.id,
+      resourceId: publicOrderResource.id,
       httpMethod: createOrderPostMethod.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
@@ -54,7 +54,7 @@ export function createAPIGatewayIntegrations(
     `${env}-${projectName}-create-order-auth-integration`,
     {
       restApi: api.id,
-      resourceId: orderResourceAuth.id,
+      resourceId: authOrderResource.id,
       httpMethod: createOrderPostMethodAuth.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
@@ -66,7 +66,7 @@ export function createAPIGatewayIntegrations(
     `${env}-${projectName}-get-order-integration`,
     {
       restApi: api.id,
-      resourceId: orderResource.id,
+      resourceId: publicOrderResource.id,
       httpMethod: getOrderGetMethod.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
@@ -78,7 +78,7 @@ export function createAPIGatewayIntegrations(
     `${env}-${projectName}-get-order-auth-integration`,
     {
       restApi: api.id,
-      resourceId: orderResourceAuth.id,
+      resourceId: authOrderResource.id,
       httpMethod: getOrderGetMethodAuth.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
@@ -90,7 +90,7 @@ export function createAPIGatewayIntegrations(
     `${env}-${projectName}-remove-product-from-order-integration`,
     {
       restApi: api.id,
-      resourceId: removeProductFromOrderResource.id,
+      resourceId: removeProductFromOrderPublicResource.id,
       httpMethod: removeProductFromOrderPutMethod.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
@@ -102,7 +102,7 @@ export function createAPIGatewayIntegrations(
     `${env}-${projectName}-remove-product-from-order-auth-integration`,
     {
       restApi: api.id,
-      resourceId: removeProductFromOrderResourceAuth.id,
+      resourceId: removeProductFromOrderAuthResource.id,
       httpMethod: removeProductOrderPutMethodAuth.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
