@@ -31,7 +31,7 @@ export default function (args: IOrdersModuleArgs) {
       },
     },
     timeout: 5,
-    sourceCodeHash: process.env.PRODUCTS_S3_OBJECT_HASH,
+    sourceCodeHash: process.env.ORDERS_S3_OBJECT_HASH,
   });
 
   createOrdersAPIGateway({

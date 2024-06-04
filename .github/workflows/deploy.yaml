@@ -37,6 +37,12 @@ jobs:
           PRODUCTS_HASH=$(aws s3 cp s3://harmonia-care-code/products-api/code.zip - | openssl dgst -sha256)
           echo "::set-output name=products_hash::${PRODUCTS_HASH}"
 
+      - name: Calculate S3 object hash for order-api
+        id: s3hash-order-api
+        run: |
+          ORDER_HASH=$(aws s3 cp s3://harmonia-care-code/orders-api/code.zip - | openssl dgst -sha256)
+          echo "::set-output name=order_hash::${ORDER_HASH}"
+
       - name: Install Pulumi CLI
         run: |
           curl -fsSL https://get.pulumi.com | sh
@@ -74,3 +80,4 @@ jobs:
           PULUMI_ENV: ${{ secrets.PULUMI_ENV }}
           USERS_S3_OBJECT_HASH: ${{ steps.s3hash-user-api.outputs.users_hash }}
           PRODUCTS_S3_OBJECT_HASH: ${{ steps.s3hash-product-api.outputs.products_hash }}
+          ORDERS_S3_OBJECT_HASH: ${{ steps.s3hash-order-api.outputs.order_hash }}
