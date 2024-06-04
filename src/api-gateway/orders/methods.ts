@@ -7,6 +7,8 @@ interface CreateAPIGatewayMethodsParams {
   removeProductFromOrderAuthResource: Resource;
   publicOrderResource: Resource;
   authOrderResource: Resource;
+  checkoutOrderAuthResource: Resource;
+  checkoutOrderPublicResource: Resource;
   authorizer: Authorizer;
   env: string;
   projectName: string;
@@ -22,6 +24,8 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     removeProductFromOrderAuthResource,
     authOrderResource,
     env,
+    checkoutOrderAuthResource,
+    checkoutOrderPublicResource,
   } = args;
 
   const createOrderPostMethod = new aws.apigateway.Method(
@@ -67,11 +71,24 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     },
   );
 
-  const removeProductFromOrderPutMethod = new aws.apigateway.Method(
+  const removeProductFromOrderPutMethodPublic = new aws.apigateway.Method(
     `${env}-${projectName}-remove-product-from-order-put-method`,
     {
       restApi: api.id,
       resourceId: removeProductFromOrderPublicResource.id,
+      httpMethod: "PUT",
+      authorization: "NONE",
+      requestParameters: {
+        "method.request.path.orderId": true,
+      },
+    },
+  );
+
+  const checkoutOrderPutMethodPublic = new aws.apigateway.Method(
+    `${env}-${projectName}-checkout-order-put-method-public`,
+    {
+      restApi: api.id,
+      resourceId: checkoutOrderPublicResource.id,
       httpMethod: "PUT",
       authorization: "NONE",
       requestParameters: {
@@ -94,12 +111,28 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     },
   );
 
+  const checkoutOrderPutMethodAuth = new aws.apigateway.Method(
+    `${env}-${projectName}-checkout-order-put-method-auth`,
+    {
+      restApi: api.id,
+      resourceId: checkoutOrderAuthResource.id,
+      httpMethod: "PUT",
+      authorization: "COGNITO_USER_POOLS",
+      authorizerId: authorizer.id,
+      requestParameters: {
+        "method.request.path.orderId": true,
+      },
+    },
+  );
+
   return {
     createOrderPostMethod,
     getOrderGetMethod,
-    removeProductFromOrderPutMethod,
+    removeProductFromOrderPutMethodPublic,
     createOrderPostMethodAuth,
     getOrderGetMethodAuth,
     removeProductOrderPutMethodAuth,
+    checkoutOrderPutMethodPublic,
+    checkoutOrderPutMethodAuth,
   };
 }

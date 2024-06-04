@@ -34,6 +34,8 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
     publicOrderResource,
     removeProductFromOrderPublicResource,
     authOrderResource,
+    checkoutOrderAuthResource,
+    checkoutOrderPublicResource,
   } = apiGatewayOrdersResource.createAPIGatewayResources({
     api,
     env,
@@ -41,12 +43,14 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
   });
 
   const {
-    removeProductFromOrderPutMethod,
+    removeProductFromOrderPutMethodPublic,
     getOrderGetMethod,
     createOrderPostMethod,
     createOrderPostMethodAuth,
     removeProductOrderPutMethodAuth,
     getOrderGetMethodAuth,
+    checkoutOrderPutMethodPublic,
+    checkoutOrderPutMethodAuth,
   } = apiGatewayOrdersMethods.createAPIGatewayMethods({
     api,
     env,
@@ -56,6 +60,8 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
     authOrderResource,
     removeProductFromOrderAuthResource,
     removeProductFromOrderPublicResource,
+    checkoutOrderAuthResource,
+    checkoutOrderPublicResource,
   });
 
   apiGatewayOrdersIntegrations.createAPIGatewayIntegrations({
@@ -70,9 +76,13 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
     getOrderGetMethod,
     getOrderGetMethodAuth,
     handler,
-    removeProductFromOrderPutMethod,
+    removeProductFromOrderPutMethodPublic,
     removeProductFromOrderAuthResource,
     projectName,
+    checkoutOrderAuthResource,
+    checkoutOrderPublicResource,
+    checkoutOrderPutMethodPublic,
+    checkoutOrderPutMethodAuth,
   });
 
   // Enable API Gateway to invoke the Lambda function
@@ -91,8 +101,13 @@ export function createOrdersAPIGateway(args: CreateOrdersAPIGatewayParams) {
     api,
     methods: [
       removeProductOrderPutMethodAuth,
+      removeProductFromOrderPutMethodPublic,
+      checkoutOrderPutMethodPublic,
+      checkoutOrderPutMethodAuth,
       getOrderGetMethod,
+      getOrderGetMethodAuth,
       createOrderPostMethod,
+      createOrderPostMethodAuth,
     ],
   });
 

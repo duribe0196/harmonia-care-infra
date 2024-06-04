@@ -5,14 +5,18 @@ interface CreateAPIGatewayIntegrationParams {
   api: RestApi;
   removeProductFromOrderPublicResource: Resource;
   removeProductFromOrderAuthResource: Resource;
+  checkoutOrderAuthResource: Resource;
+  checkoutOrderPublicResource: Resource;
   publicOrderResource: Resource;
   authOrderResource: Resource;
   createOrderPostMethod: Method;
   createOrderPostMethodAuth: Method;
   getOrderGetMethod: Method;
   getOrderGetMethodAuth: Method;
-  removeProductFromOrderPutMethod: Method;
+  removeProductFromOrderPutMethodPublic: Method;
   removeProductOrderPutMethodAuth: Method;
+  checkoutOrderPutMethodPublic: Method;
+  checkoutOrderPutMethodAuth: Method;
   handler: aws.lambda.Function;
   env: string;
   projectName: string;
@@ -24,7 +28,7 @@ export function createAPIGatewayIntegrations(
   const {
     api,
     getOrderGetMethod,
-    removeProductFromOrderPutMethod,
+    removeProductFromOrderPutMethodPublic,
     removeProductFromOrderPublicResource,
     publicOrderResource,
     createOrderPostMethod,
@@ -33,6 +37,10 @@ export function createAPIGatewayIntegrations(
     getOrderGetMethodAuth,
     removeProductFromOrderAuthResource,
     removeProductOrderPutMethodAuth,
+    checkoutOrderPutMethodAuth,
+    checkoutOrderPutMethodPublic,
+    checkoutOrderAuthResource,
+    checkoutOrderPublicResource,
     handler,
     projectName,
     env,
@@ -91,7 +99,7 @@ export function createAPIGatewayIntegrations(
     {
       restApi: api.id,
       resourceId: removeProductFromOrderPublicResource.id,
-      httpMethod: removeProductFromOrderPutMethod.httpMethod,
+      httpMethod: removeProductFromOrderPutMethodPublic.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
       integrationHttpMethod: "POST",
@@ -104,6 +112,30 @@ export function createAPIGatewayIntegrations(
       restApi: api.id,
       resourceId: removeProductFromOrderAuthResource.id,
       httpMethod: removeProductOrderPutMethodAuth.httpMethod,
+      type: "AWS_PROXY",
+      uri: handler.invokeArn,
+      integrationHttpMethod: "POST",
+    },
+  );
+
+  new aws.apigateway.Integration(
+    `${env}-${projectName}-checkout-order-auth-integration`,
+    {
+      restApi: api.id,
+      resourceId: checkoutOrderAuthResource.id,
+      httpMethod: checkoutOrderPutMethodAuth.httpMethod,
+      type: "AWS_PROXY",
+      uri: handler.invokeArn,
+      integrationHttpMethod: "POST",
+    },
+  );
+
+  new aws.apigateway.Integration(
+    `${env}-${projectName}-checkout-order-public-integration`,
+    {
+      restApi: api.id,
+      resourceId: checkoutOrderPublicResource.id,
+      httpMethod: checkoutOrderPutMethodPublic.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
       integrationHttpMethod: "POST",

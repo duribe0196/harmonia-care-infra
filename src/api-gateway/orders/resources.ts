@@ -40,11 +40,29 @@ export function createAPIGatewayResources(
     },
   );
 
+  const checkoutPublicResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-checkout-public-resource`,
+    {
+      restApi: api.id,
+      parentId: publicOrderResource.id,
+      pathPart: "checkout",
+    },
+  );
+
   const removeProductFromOrderPublicResource = new aws.apigateway.Resource(
     `${env}-${projectName}-remove-product-from-order-public-resource`,
     {
       restApi: api.id,
       parentId: removeProductPublicResource.id,
+      pathPart: "{orderId}",
+    },
+  );
+
+  const checkoutOrderPublicResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-checkout-order-public-resource`,
+    {
+      restApi: api.id,
+      parentId: checkoutPublicResource.id,
       pathPart: "{orderId}",
     },
   );
@@ -77,6 +95,15 @@ export function createAPIGatewayResources(
     },
   );
 
+  const checkoutAuthResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-checkout-auth-resource`,
+    {
+      restApi: api.id,
+      parentId: authOrderResource.id,
+      pathPart: "checkout",
+    },
+  );
+
   const removeProductFromOrderAuthResource = new aws.apigateway.Resource(
     `${env}-${projectName}-remove-product-from-order-resource-auth`,
     {
@@ -86,10 +113,21 @@ export function createAPIGatewayResources(
     },
   );
 
+  const checkoutOrderAuthResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-checkout-order-resource-auth`,
+    {
+      restApi: api.id,
+      parentId: checkoutAuthResource.id,
+      pathPart: "{orderId}",
+    },
+  );
+
   return {
     publicOrderResource,
     authOrderResource,
     removeProductFromOrderPublicResource,
     removeProductFromOrderAuthResource,
+    checkoutOrderPublicResource,
+    checkoutOrderAuthResource,
   };
 }
