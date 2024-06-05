@@ -5,7 +5,7 @@ interface CreateAPIGatewayMethodsParams {
   api: RestApi;
   createProductResource: Resource;
   productResource: Resource;
-  updateProductResource: Resource;
+  productIdResource: Resource;
   authorizer: Authorizer;
   env: string;
   projectName: string;
@@ -16,7 +16,7 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     api,
     createProductResource,
     productResource,
-    updateProductResource,
+    productIdResource,
     authorizer,
     projectName,
     env,
@@ -43,14 +43,30 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     },
   );
 
+  const getProductByIdGetMethod = new aws.apigateway.Method(
+    `${env}-${projectName}-get-product-by-id-get-method`,
+    {
+      restApi: api.id,
+      resourceId: productIdResource.id,
+      httpMethod: "GET",
+      authorization: "NONE",
+      requestParameters: {
+        "method.request.path.productId": true,
+      },
+    },
+  );
+
   const updateProductPutMethod = new aws.apigateway.Method(
     `${env}-${projectName}-update-product-get-method`,
     {
       restApi: api.id,
-      resourceId: updateProductResource.id,
+      resourceId: productIdResource.id,
       httpMethod: "PUT",
       authorization: "COGNITO_USER_POOLS",
       authorizerId: authorizer.id,
+      requestParameters: {
+        "method.request.path.productId": true,
+      },
     },
   );
 
@@ -58,5 +74,6 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     createProductPostMethod,
     getProductsGetMethod,
     updateProductPutMethod,
+    getProductByIdGetMethod,
   };
 }

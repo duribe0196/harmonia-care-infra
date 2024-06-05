@@ -29,7 +29,7 @@ export function createProductsAPIGateway(args: CreateServicesAPIGatewayParams) {
     },
   );
 
-  const { createProductResource, productResource, updateProductResource } =
+  const { createProductResource, productResource, productIdResource } =
     apiGatewayServicesResource.createAPIGatewayResources({
       api,
       env,
@@ -39,11 +39,12 @@ export function createProductsAPIGateway(args: CreateServicesAPIGatewayParams) {
     createProductPostMethod,
     getProductsGetMethod,
     updateProductPutMethod,
+    getProductByIdGetMethod,
   } = apiGatewayServicesMethod.createAPIGatewayMethods({
     api: api,
     createProductResource,
     productResource,
-    updateProductResource,
+    productIdResource,
     authorizer: authorizer,
     env,
     projectName,
@@ -52,11 +53,12 @@ export function createProductsAPIGateway(args: CreateServicesAPIGatewayParams) {
     api: api,
     handler: handler,
     createProductResource,
-    updateProductResource,
+    productIdResource,
     productResource,
     createProductPostMethod,
     getProductsGetMethod,
     updateProductPutMethod,
+    getProductByIdGetMethod,
     env,
     projectName,
   });
