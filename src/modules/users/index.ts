@@ -37,7 +37,7 @@ export default function (args: IUserModuleArgs) {
         REGION: region,
       },
     },
-    timeout: 5,
+    timeout: 10,
     sourceCodeHash: process.env.USERS_S3_OBJECT_HASH,
   });
 
