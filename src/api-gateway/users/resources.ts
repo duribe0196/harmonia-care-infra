@@ -12,23 +12,32 @@ export function createAPIGatewayResources(
 ) {
   const { api, env, projectName } = args;
 
-  const usersResource = new aws.apigateway.Resource(`${env}-${projectName}-user-resource`, {
-    restApi: api.id,
-    parentId: api.rootResourceId,
-    pathPart: "users",
-  });
+  const usersResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-user-resource`,
+    {
+      restApi: api.id,
+      parentId: api.rootResourceId,
+      pathPart: "users",
+    },
+  );
 
-  const sendOTPResource = new aws.apigateway.Resource(`${env}-${projectName}-send-otp-resource`, {
-    restApi: api.id,
-    parentId: usersResource.id,
-    pathPart: "send-otp",
-  });
+  const sendOTPResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-send-otp-resource`,
+    {
+      restApi: api.id,
+      parentId: usersResource.id,
+      pathPart: "send-otp",
+    },
+  );
 
-  const verifyOTPResource = new aws.apigateway.Resource(`${env}-${projectName}-verify-otp-resource`, {
-    restApi: api.id,
-    parentId: usersResource.id,
-    pathPart: "verify-otp",
-  });
+  const verifyOTPResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-verify-otp-resource`,
+    {
+      restApi: api.id,
+      parentId: usersResource.id,
+      pathPart: "verify-otp",
+    },
+  );
 
   const refreshSessionResource = new aws.apigateway.Resource(
     `${env}-${projectName}-refresh-session-resource`,
@@ -39,5 +48,19 @@ export function createAPIGatewayResources(
     },
   );
 
-  return { sendOTPResource, verifyOTPResource, refreshSessionResource };
+  const getUserInfoResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-get-user-info-resource`,
+    {
+      restApi: api.id,
+      parentId: usersResource.id,
+      pathPart: "get-user-info",
+    },
+  );
+
+  return {
+    sendOTPResource,
+    verifyOTPResource,
+    refreshSessionResource,
+    getUserInfoResource,
+  };
 }

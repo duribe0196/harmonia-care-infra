@@ -17,17 +17,30 @@ export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
   const { name, handler, provider, env, projectName } = args;
   const api = new aws.apigateway.RestApi(name, {}, { provider });
 
-  const { verifyOTPResource, sendOTPResource, refreshSessionResource } =
-    apiGatewayUserResource.createAPIGatewayResources({ api, projectName, env });
-  const { verifyOTPPostMethod, sendOTPPostMethod, refreshSessionPostMethod } =
-    apiGatewayUserMethod.createAPIGatewayMethods({
-      api: api,
-      sendOTPResource: sendOTPResource,
-      verifyOTPResource: verifyOTPResource,
-      refreshSessionResource: refreshSessionResource,
-      env,
-      projectName,
-    });
+  const {
+    verifyOTPResource,
+    sendOTPResource,
+    refreshSessionResource,
+    getUserInfoResource,
+  } = apiGatewayUserResource.createAPIGatewayResources({
+    api,
+    projectName,
+    env,
+  });
+  const {
+    verifyOTPPostMethod,
+    sendOTPPostMethod,
+    refreshSessionPostMethod,
+    getUserInfoGetMethod,
+  } = apiGatewayUserMethod.createAPIGatewayMethods({
+    api: api,
+    sendOTPResource: sendOTPResource,
+    verifyOTPResource: verifyOTPResource,
+    refreshSessionResource: refreshSessionResource,
+    getUserInfoResource: getUserInfoResource,
+    env,
+    projectName,
+  });
   apiGatewayUserIntegrations.createAPIGatewayIntegrations({
     api: api,
     handler: handler,
@@ -37,6 +50,8 @@ export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
     sendOTPResource: sendOTPResource,
     refreshSessionResource: refreshSessionResource,
     refreshSessionMethod: refreshSessionPostMethod,
+    getUserInfoResource: getUserInfoResource,
+    getUserInfoGetMethod: getUserInfoGetMethod,
     env,
     projectName,
   });
@@ -54,7 +69,12 @@ export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
     provider,
     env,
     api,
-    methods: [sendOTPPostMethod, verifyOTPPostMethod, refreshSessionPostMethod],
+    methods: [
+      sendOTPPostMethod,
+      verifyOTPPostMethod,
+      refreshSessionPostMethod,
+      getUserInfoGetMethod,
+    ],
     name,
   });
 
