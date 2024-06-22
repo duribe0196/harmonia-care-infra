@@ -53,6 +53,7 @@ export default function (args: IUserModuleArgs) {
     provider,
     env,
     projectName,
+    userPool,
   });
 
   secretManagerUtils.createCognitoSecrets({

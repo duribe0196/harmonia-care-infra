@@ -9,19 +9,36 @@ interface CreateUserAPIGatewayParams {
   name: string;
   handler: aws.lambda.Function;
   provider: pulumi.ProviderResource;
+  userPool: aws.cognito.UserPool;
   env: string;
   projectName: string;
 }
 
 export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
-  const { name, handler, provider, env, projectName } = args;
-  const api = new aws.apigateway.RestApi(name, {}, { provider });
+  const { name, handler, provider, env, projectName, userPool } = args;
+  const api = new aws.apigateway.RestApi(
+    name,
+    {},
+    { provider, dependsOn: [userPool] },
+  );
+
+  // Create an API Gateway Authorizer using the Cognito User Pool
+  const authorizer = new aws.apigateway.Authorizer(
+    `${env}-${projectName}-users-cognito-authorizer`,
+    {
+      restApi: api,
+      type: "COGNITO_USER_POOLS",
+      identitySource: "method.request.header.Authorization",
+      providerArns: [userPool.arn],
+    },
+  );
 
   const {
     verifyOTPResource,
     sendOTPResource,
     refreshSessionResource,
-    getUserInfoResource,
+    userInfoResource,
+    signOutResource,
   } = apiGatewayUserResource.createAPIGatewayResources({
     api,
     projectName,
@@ -32,15 +49,19 @@ export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
     sendOTPPostMethod,
     refreshSessionPostMethod,
     getUserInfoGetMethod,
+    signOutPostMethod,
   } = apiGatewayUserMethod.createAPIGatewayMethods({
     api: api,
     sendOTPResource: sendOTPResource,
     verifyOTPResource: verifyOTPResource,
     refreshSessionResource: refreshSessionResource,
-    getUserInfoResource: getUserInfoResource,
+    userInfoResource: userInfoResource,
+    signOutResource: signOutResource,
     env,
     projectName,
+    authorizer,
   });
+
   apiGatewayUserIntegrations.createAPIGatewayIntegrations({
     api: api,
     handler: handler,
@@ -50,8 +71,10 @@ export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
     sendOTPResource: sendOTPResource,
     refreshSessionResource: refreshSessionResource,
     refreshSessionMethod: refreshSessionPostMethod,
-    getUserInfoResource: getUserInfoResource,
+    userInfoResource: userInfoResource,
     getUserInfoGetMethod: getUserInfoGetMethod,
+    signOutPostMethod: signOutPostMethod,
+    signOutResource: signOutResource,
     env,
     projectName,
   });
@@ -74,6 +97,7 @@ export function createUsersAPIGateway(args: CreateUserAPIGatewayParams) {
       verifyOTPPostMethod,
       refreshSessionPostMethod,
       getUserInfoGetMethod,
+      signOutPostMethod,
     ],
     name,
   });

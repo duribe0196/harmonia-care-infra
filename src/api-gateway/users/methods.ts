@@ -1,14 +1,16 @@
 import * as aws from "@pulumi/aws";
-import { Resource, RestApi } from "@pulumi/aws/apigateway";
+import { Authorizer, Resource, RestApi } from "@pulumi/aws/apigateway";
 
 interface CreateAPIGatewayMethodsParams {
   api: RestApi;
   sendOTPResource: Resource;
   verifyOTPResource: Resource;
   refreshSessionResource: Resource;
-  getUserInfoResource: Resource;
+  userInfoResource: Resource;
+  signOutResource: Resource;
   projectName: string;
   env: string;
+  authorizer: Authorizer;
 }
 
 export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
@@ -17,9 +19,11 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     sendOTPResource,
     verifyOTPResource,
     refreshSessionResource,
-    getUserInfoResource,
+    userInfoResource,
+    signOutResource,
     env,
     projectName,
+    authorizer,
   } = args;
 
   const sendOTPPostMethod = new aws.apigateway.Method(
@@ -56,9 +60,20 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     `${env}-${projectName}-get-user-info-get-method`,
     {
       restApi: api.id,
-      resourceId: getUserInfoResource.id,
+      resourceId: userInfoResource.id,
       httpMethod: "GET",
       authorization: "NONE",
+    },
+  );
+
+  const signOutPostMethod = new aws.apigateway.Method(
+    `${env}-${projectName}-sign-out-post-method`,
+    {
+      restApi: api.id,
+      resourceId: signOutResource.id,
+      httpMethod: "POST",
+      authorization: "COGNITO_USER_POOLS",
+      authorizerId: authorizer.id,
     },
   );
 
@@ -67,5 +82,6 @@ export function createAPIGatewayMethods(args: CreateAPIGatewayMethodsParams) {
     verifyOTPPostMethod,
     refreshSessionPostMethod,
     getUserInfoGetMethod,
+    signOutPostMethod,
   };
 }

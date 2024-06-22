@@ -48,8 +48,8 @@ export function createAPIGatewayResources(
     },
   );
 
-  const getUserInfoResource = new aws.apigateway.Resource(
-    `${env}-${projectName}-get-user-info-resource`,
+  const userInfoResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-user-info-resource`,
     {
       restApi: api.id,
       parentId: usersResource.id,
@@ -57,10 +57,20 @@ export function createAPIGatewayResources(
     },
   );
 
+  const signOutResource = new aws.apigateway.Resource(
+    `${env}-${projectName}-sign-out-resource`,
+    {
+      restApi: api.id,
+      parentId: usersResource.id,
+      pathPart: "sign-out",
+    },
+  );
+
   return {
     sendOTPResource,
     verifyOTPResource,
     refreshSessionResource,
-    getUserInfoResource,
+    userInfoResource,
+    signOutResource,
   };
 }

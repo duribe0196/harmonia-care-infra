@@ -6,11 +6,13 @@ interface CreateAPIGatewayIntegrationParams {
   sendOTPResource: Resource;
   verifyOTPResource: Resource;
   refreshSessionResource: Resource;
-  getUserInfoResource: Resource;
+  userInfoResource: Resource;
+  signOutResource: Resource;
   sendOTPPostMethod: Method;
   verifyOTPPostMethod: Method;
   refreshSessionMethod: Method;
   getUserInfoGetMethod: Method;
+  signOutPostMethod: Method;
   handler: aws.lambda.Function;
   projectName: string;
   env: string;
@@ -27,8 +29,10 @@ export function createAPIGatewayIntegrations(
     sendOTPPostMethod,
     refreshSessionResource,
     refreshSessionMethod,
-    getUserInfoResource,
+    userInfoResource,
     getUserInfoGetMethod,
+    signOutPostMethod,
+    signOutResource,
     handler,
     env,
     projectName,
@@ -74,8 +78,20 @@ export function createAPIGatewayIntegrations(
     `${env}-${projectName}-get-user-info-get-method-integration`,
     {
       restApi: api.id,
-      resourceId: getUserInfoResource.id,
+      resourceId: userInfoResource.id,
       httpMethod: getUserInfoGetMethod.httpMethod,
+      type: "AWS_PROXY",
+      uri: handler.invokeArn,
+      integrationHttpMethod: "POST",
+    },
+  );
+
+  new aws.apigateway.Integration(
+    `${env}-${projectName}-sign-out-post-method-integration`,
+    {
+      restApi: api.id,
+      resourceId: signOutResource.id,
+      httpMethod: signOutPostMethod.httpMethod,
       type: "AWS_PROXY",
       uri: handler.invokeArn,
       integrationHttpMethod: "POST",
